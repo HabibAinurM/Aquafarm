@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html class="no-js" lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>AquaFarmKit - Smart Farming Mini untuk Edukasi & Ketahanan Pangan</title>
+    <meta name="description" content="Sistem budidaya ikan dan tanaman berbasis IoT (Internet of Things) untuk edukasi STEM dan urban farming berkelanjutan." />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.lineicons.com/3.0/lineicons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
+    <style>
+        /* Definisi Warna Ungu Utama berdasarkan Logo */
+        :root {
+            --color-primary-dark: #4B0082;
+            --color-primary-light: #54398E;
+            --color-background: #f3e5f5;
+            --color-secondary: #D1C4E9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Navigation */
+        .navbar-area {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .navbar-area.scrolled {
+            padding: 5px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .navbar-brand img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .navbar-brand h3 {
+            color: var(--color-primary-light) !important;
+            margin: 0;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 24px;
+            position: relative;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: none;
+            width: 100%;
+            height: 3px;
+            background-color: var(--color-primary-dark);
+            display: block;
+            position: absolute;
+            transition: all 0.3s;
+        }
+
+        .navbar-toggler-icon::before,
+        .navbar-toggler-icon::after {
+            content: '';
+            width: 100%;
+            height: 3px;
+            background-color: var(--color-primary-dark);
+            display: block;
+            position: absolute;
+            transition: all 0.3s;
+        }
+
+        .navbar-toggler-icon::before {
+            top: -8px;
+        }
+
+        .navbar-toggler-icon::after {
+            bottom: -8px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #333;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--color-primary-light);
+        }
+
+        .button {
+            background-color: var(--color-primary-light);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            border: 2px solid var(--color-primary-light);
+        }
+
+        .button:hover {
+            background-color: var(--color-primary-dark);
+            border-color: var(--color-primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .button-lg {
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+
+        /* Hero Section */
+        .hero-section-wrapper-5 {
+            background-color: var(--color-background);
+            padding: 150px 0 80px;
+        }
+
+        .hero-content-wrapper h2 {
+            font-size: 3rem;
+            color: var(--color-primary-dark);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero-content-wrapper h4 {
+            color: var(--color-primary-light);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-content-wrapper p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title h3 {
+            color: var(--color-primary-dark);
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* About Section */
+        .about-content-wrapper ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .about-content-wrapper ul li {
+            padding: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .about-content-wrapper ul li i {
+            color: var(--color-primary-light);
+            margin-right: 10px;
+            font-size: 1.5rem;
+            vertical-align: middle;
+        }
+
+        /* Feature Section */
+        #fitur {
+            background-color: var(--color-secondary);
+        }
+
+        .single-feature {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .single-feature:hover {
+            transform: translateY(-10px);
+        }
+
+        .single-feature .icon {
+            margin-bottom: 20px;
+        }
+
+        .single-feature .icon i {
+            font-size: 3rem;
+            color: var(--color-primary-light);
+        }
+
+        .single-feature h5 {
+            color: var(--color-primary-dark);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        #contact {
+            background-color: var(--color-secondary);
+        }
+
+        .contact-form-wrapper {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .single-input {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .single-input input,
+        .single-input textarea {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .single-input input:focus,
+        .single-input textarea:focus {
+            outline: none;
+            border-color: var(--color-primary-light);
+        }
+
+        .single-input i {
+            position: absolute;
+            left: 15px;
+            top: 17px;
+            color: var(--color-primary-light);
+            font-size: 18px;
+        }
+
+        .single-input textarea + i {
+            top: 20px;
+        }
+
+        .form-button button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--color-primary-light);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-button button:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        .left-wrapper .single-item {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .left-wrapper .single-item .icon {
+            margin-right: 15px;
+        }
+
+        .left-wrapper .single-item .icon i {
+            font-size: 2rem;
+            color: var(--color-primary-light);
+        }
+
+        .left-wrapper .single-item .text p {
+            margin: 0;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--color-primary-dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer h3, .footer h6 {
+            color: white !important;
+            margin-bottom: 20px;
+        }
+
+        .footer .desc {
+            color: #D1C4E9;
+            margin-bottom: 20px;
+        }
+
+        .footer .links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer .links li {
+            margin-bottom: 10px;
+        }
+
+        .footer .links a {
+            color: #D1C4E9;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer .links a:hover {
+            color: white;
+        }
+
+        .socials {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .socials li a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        .socials li a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .copyright-wrapper {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: #D1C4E9;
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--color-primary-light);
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            border-radius: 50%;
+            display: none;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .scroll-top:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-5px);
+        }
+
+        .scroll-top.active {
+            display: block;
+        }
+
+        /* Alert Styles */
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content-wrapper h2 {
+                font-size: 2rem;
+            }
+            
+            .hero-content-wrapper h4 {
+                font-size: 1.2rem;
+            }
+
+            .section-title h3 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="preloader" id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <section id="home" class="hero-section-wrapper-5">
+        <nav class="navbar navbar-expand-lg navbar-area">
+            <div class="container">
+                <a class="navbar-brand" href="#home">
+                    <img src="assets/img/logo/aquafarm.png"AquaFarm Logo" onerror="this.style.display='none'">
+                    <h3>AQUAFARM</h3> 
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#home">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tentang">Tentang</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#fitur">Fitur</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#manfaat">Manfaat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contact">Kontak</a>
+                        </li>
+                    </ul>
+                    <div class="ms-3">
+                        <a href="#contact" class="button">Hubungi Kami</a> 
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-section container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content-wrapper animate__animated animate__fadeInUp">
+                        <h2 class="mb-4">AquaFarmKit</h2>
+                        <h4 class="mb-3">Smart Farming Mini untuk Edukasi & Ketahanan Pangan</h4>
+                        <p class="mb-4">
+                            AquaFarmKit adalah sistem budidaya ikan dan tanaman (Aquaponik) dalam satu alat berbasis <strong>IoT</strong>. Mengajarkan konsep <strong>pertanian berkelanjutan</strong> secara interaktif dan menyenangkan!
+                        </p>
+                        <a href="#fitur" class="button button-lg">Lihat Fitur Utama <i class="lni lni-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="about-content-wrapper">
+                        <div class="section-title mb-4">
+                            <h3 class="mb-3">Kenapa Harus AquaFarmKit?</h3>
+                            <p>
+                                AquaFarmKit adalah solusi cerdas, modern, dan ramah lingkungan untuk belajar dan mempraktikkan Aquaponik, mendukung gaya hidup berkelanjutan.
+                            </p>
+                        </div>
+                        <h5 class="mb-3">Cocok untuk:</h5>
+                        <ul>
+                            <li>
+                                <i class="lni lni-graduation"></i>
+                                <strong>Sekolah</strong> – Sebagai media pembelajaran STEM & lingkungan.
+                            </li>
+                            <li>
+                                <i class="lni lni-home"></i>
+                                <strong>Rumah Tangga</strong> – Solusi budidaya sehat, hemat lahan, dan minim perawatan.
+                            </li>
+                            <li>
+                                <i class="lni lni-users"></i>
+                                <strong>Komunitas</strong> – Penggerak urban farming berkelanjutan.
+                            </li>
+                        </ul>
+                        <a href="#fitur" class="button button-lg mt-3">Pelajari Lebih Lanjut</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="fitur" class="feature-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="section-title text-center mb-5">
+                        <h3 class="mb-3">Fitur Utama AquaFarmKit 💡</h3>
+                        <p>Teknologi cerdas yang membuat proses budidaya Anda lebih mudah, efisien, dan menyenangkan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-feature">
+                        <div class="icon">
+                            <i class="lni lni-mobile"></i>
+                        </div>
+                        <div class="content">
+                            <h5>Pemantauan Otomatis</h5>
+                            <p>Pantau kondisi ikan dan tanaman Anda secara real-time melalui aplikasi <strong>Android</strong> yang mudah digunakan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-feature">
+                        <div class="icon">
+                            <i class="lni lni-drop"></i>
+                        </div>
+                        <div class="content">
+                            <h5>Hemat Air Hingga 80%</h5>
+                            <p>Menggunakan sistem sirkulasi Aquaponik tertutup yang jauh lebih efisien dibandingkan metode pertanian konvensional.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-feature">
+                        <div class="icon">
+                            <i class="lni lni-layers"></i>
+                        </div>
+                        <div class="content">
+                            <h5>Sistem Integrasi Budidaya</h5>
+                            <p>Budidaya ikan & sayuran dalam satu sistem. Nutrisi dari ikan menyuburkan tanaman, air bersih kembali ke ikan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-feature">
+                        <div class="icon">
+                            <i class="lni lni-pulse"></i>
+                        </div>
+                        <div class="content">
+                            <h5>Sensor Kualitas Air</h5>
+                            <p>Dilengkapi sensor <strong>pH</strong>, <strong>suhu</strong>, dan aerasi otomatis untuk menjaga lingkungan budidaya yang optimal.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-feature">
+                        <div class="icon">
+                            <i class="lni lni-microscope"></i>
+                        </div>
+                        <div class="content">
+                            <h5>Media Belajar & Riset Mini</h5>
+                            <p>Didesain sebagai platform yang ideal untuk eksperimen sains, teknologi, dan lingkungan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-feature">
+                        <div class="icon">
+                            <i class="lni lni-leaf"></i>
+                        </div>
+                        <div class="content">
+                            <h5>Dukungan SDGs</h5>
+                            <p>Secara langsung mendukung tujuan PBB untuk pertanian berkelanjutan dan aksi iklim.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="manfaat" class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="about-content-wrapper">
+                        <div class="section-title mb-4">
+                            <h3 class="mb-3">Manfaat yang Akan Anda Dapatkan 🚀</h3>
+                            <p>
+                                Lebih dari sekadar alat budidaya, AquaFarmKit adalah investasi dalam pengetahuan dan keberlanjutan masa depan.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <i class="lni lni-bulb"></i>
+                                <strong>Edukasi Sains & Teknologi</strong> ramah lingkungan.
+                            </li>
+                            <li>
+                                <i class="lni lni-dinner"></i>
+                                Mendukung program <strong>Ketahanan Pangan</strong> lokal.
+                            </li>
+                            <li>
+                                <i class="lni lni-circle-plus"></i>
+                                Meningkatkan <strong>kesadaran peduli lingkungan</strong> dan efisiensi sumber daya.
+                            </li>
+                            <li>
+                                <i class="lni lni-investment"></i>
+                                Menumbuhkan semangat <strong>wirausaha hijau</strong> (green entrepreneurship).
+                            </li>
+                        </ul>
+                        <a href="#contact" class="button button-lg mt-3">Pesan Sekarang</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="section-title text-center mb-5">
+                        <h3 class="mb-3">Hubungi Kami 👋</h3>
+                        <p>Tertarik membawa teknologi AquaFarmKit ke sekolah atau rumah Anda? Hubungi tim kami untuk konsultasi dan pemesanan.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="contact-form-wrapper">
+                        <div id="successAlert" class="alert-success">
+                            ✅ Form berhasil diisi! Anda akan diarahkan ke WhatsApp untuk mengirim pesan.
+                        </div>
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="single-input">
+                                        <input type="text" id="name" name="name" placeholder="Nama Lengkap" required>
+                                        <i class="lni lni-user"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="single-input">
+                                        <input type="email" id="email" name="email" placeholder="Email Anda" required>
+                                        <i class="lni lni-envelope"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="single-input">
+                                        <input type="text" id="subject" name="subject" placeholder="Subjek/Minat" required>
+                                        <i class="lni lni-bookmark"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="single-input">
+                                        <input type="tel" id="number" name="number" placeholder="Nomor Telepon" required>
+                                        <i class="lni lni-phone"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="single-input">
+                                        <textarea name="message" id="message" placeholder="Pesan Anda" rows="6" required></textarea>
+                                        <i class="lni lni-comments"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-button">
+                                        <button type="submit"> <i class="lni lni-telegram-original"></i> Kirim Pesan</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="left-wrapper">
+                        <div class="single-item">
+                            <div class="icon">
+                                <i class="lni lni-map-marker"></i>
+                            </div>
+                            <div class="text">
+                                <p>Madiun, Jawa Timur</p>
+                            </div>
+                        </div>
+                        <div class="single-item">
+                            <div class="icon">
+                                <i class="lni lni-instagram-original"></i>
+                            </div>
+                            <div class="text">
+                                <p>IG: @aquafarmkit2k25</p>
+                            </div>
+                        </div>
+                        <div class="single-item">
+                            <div class="icon">
+                                <i class="lni lni-envelope"></i>
+                            </div>
+                            <div class="text">
+                                <p>hydrolink.team@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-md-6">
+                    <div class="footer-widget">
+                        <h3 class="mb-3">AquaFarmKit</h3>
+                        <p class="desc">AquaFarmKit: Solusi Smart Farming Mini untuk mengedukasi generasi muda tentang ketahanan pangan dan teknologi ramah lingkungan.</p>
+                        <ul class="socials">
+                            <li><a href="https://instagram.com/aquafarmkit2k25" target="_blank"><i class="lni lni-instagram-filled"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h6>Tautan Cepat</h6>
+                        <ul class="links">
+                            <li><a href="#home">Beranda</a></li>
+                            <li><a href="#tentang">Tentang</a></li>
+                            <li><a href="#fitur">Fitur</a></li>
+                            <li><a href="#manfaat">Manfaat</a></li>
+                            <li><a href="#contact">Kontak</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-widget">
+                        <h6>Kenapa AquaFarmKit?</h6>
+                        <ul class="links">
+                            <li><i class="lni lni-checkmark-circle"></i> Praktis, Edukatif, dan Menarik</li>
+                            <li><i class="lni lni-checkmark-circle"></i> Mendukung SDGs</li>
+                            <li><i class="lni lni-checkmark-circle"></i> Solusi Cerdas Pertanian Modern</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright-wrapper">
+                <p>Copyright © 2025 AquaFarmKit by Tim HydroLink. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="scroll-top" id="scrollTop">
+        <i class="lni lni-chevron-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').style.display = 'none';
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar-area');
+            if (window.pageYOffset > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Active navigation
+        window.addEventListener('scroll', function() {
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Scroll to top button
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('active');
+            } else {
+                scrollTop.classList.remove('active');
+            }
+        });
+
+        // Form submission ke WhatsApp
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Ambil data form
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const number = document.getElementById('number').value;
+            const message = document.getElementById('message').value;
+
+            // Format pesan WhatsApp
+            const waMessage = `*PESAN BARU dari Website AquaFarmKit*
+            
+👤 *Nama:* ${name}
+📧 *Email:* ${email}
+📝 *Subjek:* ${subject}
+📱 *No. Telp:* ${number}
+
+💬 *Pesan:*
+${message}
+
+---
+_Dikirim dari form kontak AquaFarmKit_`;
+
+            // Encode pesan untuk URL
+            const encodedMessage = encodeURIComponent(waMessage);
+            
+            // Nomor WhatsApp tujuan (ganti dengan nomor Anda)
+            const waNumber = '6285871328301';
+            
+            // Buka WhatsApp
+            const waURL = `https://wa.me/${waNumber}?text=${encodedMessage}`;
+            window.open(waURL, '_blank');
+            
+            // Tampilkan alert sukses
+            const successAlert = document.getElementById('successAlert');
+            successAlert.style.display = 'block';
+            
+            // Reset form
+            this.reset();
+            
+            // Scroll ke alert
+            successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Sembunyikan alert setelah 5 detik
+            setTimeout(function() {
+                successAlert.style.display = 'none';
+            }, 5000);
+        });
+    </script>
